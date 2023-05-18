@@ -10,8 +10,9 @@ const { log } = require("console");
 class Emitter extends EventEmitter {}
 // initialize object
 const myEmitter = new Emitter();
-//*_Emitter_E
 myEmitter.on("log", (msg, fileName) => logEvents(msg, fileName));
+//*_Emitter_E
+
 //*_Server setup_S
 const PORT = process.env.PORT || 3500;
 
@@ -105,8 +106,7 @@ const server = http.createServer((req, res) => {
         //serve a 404 response
         serveFile(path.join(__dirname, 'views', '404.html'), 'text/html',res)
         break;
-    }
-    
+    }    
   }
 });
 
