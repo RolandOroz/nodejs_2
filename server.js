@@ -20,23 +20,24 @@ const serveFile = async (filePath, contentType, response) => {
   try {
     const rawData = await fsPromises.readFile(
       filePath,
-      !contentType.includes('image') ? 'utf8' : ''
+      !contentType.includes("image") ? "utf8" : ""
     );
-    const data = contentType === 'aplication/json'
-    ? JSON.parse(rawData) : rawData;
-    response.writeHead(
-      filePath.includes('404.html') ? 404 : 200,
-      { 'Content-Type' : contentType});
+    const data =
+      contentType === "aplication/json" ? JSON.parse(rawData) : rawData;
+    response.writeHead(filePath.includes("404.html") ? 404 : 200, {
+      "Content-Type": contentType,
+    });
     response.end(
-      contentType === 'aplication/json' ? JSON.stringify(data) : data
-    );    
+      //ternary: if A=B then C else D
+      contentType === "aplication/json" ? JSON.stringify(data) : data
+    );
   } catch (error) {
-      console.error(error);
-      myEmitter.emit("log", `${error.name}: ${error.message}`, "errorLog.txt");
-      response.statusCode = 500;
-      response.end();
+    console.error(error);
+    myEmitter.emit("log", `${error.name}: ${error.message}`, "errorLog.txt");
+    response.statusCode = 500;
+    response.end();
   }
-}
+};
 
 const server = http.createServer((req, res) => {
   console.log(req.url, req.method);
@@ -83,8 +84,8 @@ const server = http.createServer((req, res) => {
           ? path.join(__dirname, "views", req.url)
           : path.join(__dirname, req.url);
 
-// makes .html extension not required in the browser
-  if(!extension && req.url.slice(-1) !== '/') filePath += '.html';
+  // makes .html extension not required in the browser
+  if (!extension && req.url.slice(-1) !== "/") filePath += ".html";
 
   const fileExists = fs.existsSync(filePath);
 
@@ -94,32 +95,20 @@ const server = http.createServer((req, res) => {
   } else {
     //301 redirect
     switch (path.parse(filePath).base) {
-      case 'old-page.html':
-        res.writeHead(301, {'Location': '/new-page.html'});
-        res.end();        
-        break;
-      case 'www-page.html' :
-        res.writeHead(301, { 'Location': '/'});
+      case "old-page.html":
+        res.writeHead(301, { Location: "/new-page.html" });
         res.end();
-        break;    
+        break;
+      case "www-page.html":
+        res.writeHead(301, { Location: "/" });
+        res.end();
+        break;
       default:
         //serve a 404 response
-        serveFile(path.join(__dirname, 'views', '404.html'), 'text/html',res)
+        serveFile(path.join(__dirname, "views", "404.html"), "text/html", res);
         break;
-    }    
+    }
   }
 });
 
 server.listen(PORT, () => console.log(`Server running on port: ${PORT}`));
-//*_Server setup_E
-
-//*- TEMP COMMENT!!__S
-/* // add listener for the log event
-myEmitter.on("log", (msg) => logEvents(msg));
-
-setTimeout(() => {
-  // emit event
-  myEmitter.emit("log", "Log event emitted!");
-}, 2000);
- */
-//*- TEMP COMMENT!!__E
